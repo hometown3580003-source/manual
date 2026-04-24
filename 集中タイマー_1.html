@@ -8,16 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --border: #2a2a2a;
-    --text: #e8e4dc;
-    --muted: #5a5a5a;
-    --accent: #c8f542;
-    --accent-dim: #8aaa2a;
-    --warn: #f5a623;
-    --done: #42f5a6;
-    --red: #f54242;
+    --bg: #f5f5f0;
+    --surface: #ffffff;
+    --border: #d8d8d0;
+    --text: #1a1a1a;
+    --muted: #888880;
+    --accent: #2a7d2e;
+    --accent-dim: #4aaa4e;
+    --warn: #c87000;
+    --done: #1a8a5a;
+    --red: #c03030;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,8 +42,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(200,245,66,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(200,245,66,0.03) 1px, transparent 1px);
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
   }
@@ -184,7 +184,7 @@
 
   /* アナウンスバナー */
   .announce-banner {
-    background: rgba(200,245,66,0.1);
+    background: rgba(42,125,46,0.08);
     border: 1px solid var(--accent);
     border-radius: 8px;
     padding: 14px 20px;
@@ -207,7 +207,7 @@
     transform: translateY(0);
   }
   .announce-banner.done-banner {
-    background: rgba(66,245,166,0.1);
+    background: rgba(26,138,90,0.08);
     border-color: var(--done);
     color: var(--done);
   }
@@ -232,10 +232,10 @@
   .btn-start {
     background: var(--accent);
     border-color: var(--accent);
-    color: #0d0d0d;
+    color: #ffffff;
     grid-column: span 2;
   }
-  .btn-start:hover { background: #d4ff50; }
+  .btn-start:hover { background: #1a5c1e; }
   .btn-start:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .btn-pause {
