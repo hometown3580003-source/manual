@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>集中タイマー</title>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f5f0;
+    --surface: #ffffff;
+    --border: #d8d8d0;
+    --text: #1a1a1a;
+    --muted: #888880;
+    --accent: #2a7d2e;
+    --accent-dim: #4aaa4e;
+    --warn: #c87000;
+    --done: #1a8a5a;
+    --red: #c03030;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 背景グリッド */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ヘッダー */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .header h1 {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .header .tagline {
+    font-size: 11px;
+    color: #3a3a3a;
+    letter-spacing: 0.1em;
+  }
+
+  /* 時間選択 */
+  .time-select {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .time-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 12px 8px;
+    border-radius: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .time-btn:hover {
+    border-color: var(--accent-dim);
+    color: var(--text);
+  }
+  .time-btn.active {
+    background: rgba(200,245,66,0.08);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .time-btn .label {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  .time-btn.active .label { color: var(--accent-dim); }
+
+  /* タイマー表示 */
+  .timer-display {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* プログレスバー（上部） */
+  .progress-track {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 1s linear;
+  }
+
+  .elapsed-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .time-big {
+    font-family: 'DM Mono', monospace;
+    font-size: 72px;
+    font-weight: 300;
+    letter-spacing: -2px;
+    line-height: 1;
+    color: var(--text);
+    transition: color 0.3s;
+  }
+  .time-big.accent { color: var(--accent); }
+  .time-big.warning { color: var(--warn); }
+  .time-big.done-color { color: var(--done); }
+
+  .total-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* セグメントバー */
+  .segments {
+    display: flex;
+    gap: 4px;
+    margin-top: 20px;
+  }
+  .seg {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.4s;
+  }
+  .seg.passed { background: var(--accent-dim); }
+  .seg.current { background: var(--accent); }
+
+  /* アナウンスバナー */
+  .announce-banner {
+    background: rgba(42,125,46,0.08);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: all 0.3s ease;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .announce-banner.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .announce-banner.done-banner {
+    background: rgba(26,138,90,0.08);
+    border-color: var(--done);
+    color: var(--done);
+  }
+
+  /* コントロールボタン */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .btn {
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.15s;
+  }
+  .btn-start {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+    grid-column: span 2;
+  }
+  .btn-start:hover { background: #1a5c1e; }
+  .btn-start:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-pause {
+    background: transparent;
+    color: var(--warn);
+    border-color: var(--warn);
+  }
+  .btn-pause:hover { background: rgba(245,166,35,0.08); }
+
+  .btn-reset {
+    background: transparent;
+    color: var(--muted);
+    border-color: var(--border);
+  }
+  .btn-reset:hover { color: var(--red); border-color: var(--red); }
+
+  /* 音量注意書き */
+  .note {
+    text-align: center;
+    font-size: 11px;
+    color: #3a3a3a;
+    margin-top: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* 完了時フラッシュ */
+  @keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .flashing { animation: flash 0.5s ease 3; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>⏱ Focus Timer</h1>
+    <div class="tagline">5分ごとにアナウンスします</div>
+  </div>
+
+  <!-- 合計時間選択 -->
+  <div class="time-select" id="timeSelect">
+    <button class="time-btn active" data-min="15" onclick="selectTime(this)">
+      15<span style="font-size:11px">分</span>
+      <span class="label">3セグメント</span>
+    </button>
+    <button class="time-btn" data-min="20" onclick="selectTime(this)">
+      20<span style="font-size:11px">分</span>
+      <span class="label">4セグメント</span>
+    </button>
+    <button class="time-btn" data-min="25" onclick="selectTime(this)">
+      25<span style="font-size:11px">分</span>
+      <span class="label">5セグメント</span>
+    </button>
+    <button class="time-btn" data-min="30" onclick="selectTime(this)">
+      30<span style="font-size:11px">分</span>
+      <span class="label">6セグメント</span>
+    </button>
+    <button class="time-btn" data-min="45" onclick="selectTime(this)">
+      45<span style="font-size:11px">分</span>
+      <span class="label">9セグメント</span>
+    </button>
+    <button class="time-btn" data-min="60" onclick="selectTime(this)">
+      60<span style="font-size:11px">分</span>
+      <span class="label">12セグメント</span>
+    </button>
+  </div>
+
+  <!-- タイマー本体 -->
+  <div class="timer-display">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="elapsed-label">経過時間</div>
+    <div class="time-big" id="timeBig">00:00</div>
+    <div class="total-label" id="totalLabel">/ 15:00</div>
+    <div class="segments" id="segments"></div>
+  </div>
+
+  <!-- アナウンスバナー -->
+  <div class="announce-banner" id="announceBanner">準備OK　スタートを押してください</div>
+
+  <!-- コントロール -->
+  <div class="controls" id="controls">
+    <button class="btn btn-start" id="btnStart" onclick="startTimer()">スタート</button>
+    <button class="btn btn-pause" id="btnPause" onclick="pauseTimer()" style="display:none">一時停止</button>
+    <button class="btn btn-reset" id="btnReset" onclick="resetTimer()" style="display:none">リセット</button>
+  </div>
+
+  <div class="note">※ ビープ音には端末の音量をONにしてください</div>
+</div>
+
+<script>
+let totalMinutes = 15;
+let elapsed = 0; // 秒
+let timer = null;
+let running = false;
+let lastAnnounced = -1;
+
+function selectTime(btn) {
+  if (running) return;
+  document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  totalMinutes = parseInt(btn.dataset.min);
+  resetTimer();
+  updateDisplay();
+}
+
+function buildSegments() {
+  const seg = document.getElementById('segments');
+  seg.innerHTML = '';
+  const count = totalMinutes / 5;
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement('div');
+    d.className = 'seg';
+    d.id = 'seg-' + i;
+    seg.appendChild(d);
+  }
+}
+
+function updateSegments() {
+  const passed = Math.floor(elapsed / 60 / 5); // 何個の5分が過ぎたか
+  const count = totalMinutes / 5;
+  for (let i = 0; i < count; i++) {
+    const s = document.getElementById('seg-' + i);
+    if (!s) continue;
+    s.classList.remove('passed', 'current');
+    if (i < passed) s.classList.add('passed');
+    else if (i === passed && elapsed > 0) s.classList.add('current');
+  }
+}
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function updateDisplay() {
+  const m = Math.floor(elapsed / 60);
+  const s = elapsed % 60;
+  const big = document.getElementById('timeBig');
+  big.textContent = pad(m) + ':' + pad(s);
+
+  // 色変化
+  const pct = elapsed / (totalMinutes * 60);
+  big.className = 'time-big';
+  if (elapsed >= totalMinutes * 60) big.classList.add('done-color');
+  else if (pct >= 0.8) big.classList.add('warning');
+  else if (pct >= 0.3) big.classList.add('accent');
+
+  document.getElementById('totalLabel').textContent = '/ ' + pad(totalMinutes) + ':00';
+
+  // プログレス
+  const fillPct = Math.min(100, (elapsed / (totalMinutes * 60)) * 100);
+  document.getElementById('progressFill').style.width = fillPct + '%';
+
+  updateSegments();
+}
+
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function beep(type) {
+  try {
+    const ctx = getAudioCtx();
+    if (type === 'start') {
+      rin(ctx, 0.0);
+    } else if (type === 'done') {
+      rin(ctx, 0.0);
+      rin(ctx, 1.2);
+      rin(ctx, 2.4);
+    } else {
+      rin(ctx, 0.0);
+    }
+  } catch(e) {}
+}
+
+function rin(ctx, startDelay) {
+  const t = ctx.currentTime + startDelay;
+
+  // おりんの倍音構成（高音バージョン）
+  const partials = [
+    { freq: 1200, vol: 0.5,  decay: 4.0 },
+    { freq: 2400, vol: 0.25, decay: 3.0 },
+    { freq: 3600, vol: 0.15, decay: 2.0 },
+    { freq: 4800, vol: 0.07, decay: 1.2 },
+  ];
+
+  partials.forEach(p => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine'; // サイン波で純粋で丸い音
+    osc.frequency.value = p.freq;
+
+    // 瞬時に立ち上がり、ゆっくり消えていく
+    gain.gain.setValueAtTime(p.vol, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + p.decay);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + p.decay + 0.1);
+  });
+
+  // 打撃の瞬間の「チン」というごく短いアタック
+  const attackOsc = ctx.createOscillator();
+  const attackGain = ctx.createGain();
+  attackOsc.type = 'triangle';
+  attackOsc.frequency.value = 5000;
+  attackGain.gain.setValueAtTime(0.15, t);
+  attackGain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+  attackOsc.connect(attackGain);
+  attackGain.connect(ctx.destination);
+  attackOsc.start(t);
+  attackOsc.stop(t + 0.1);
+}
+
+function speak(type) {
+  beep(type);
+}
+
+function showBanner(text, done = false) {
+  const b = document.getElementById('announceBanner');
+  b.textContent = text;
+  b.className = 'announce-banner visible' + (done ? ' done-banner' : '');
+  b.classList.add('flashing');
+  setTimeout(() => b.classList.remove('flashing'), 1800);
+  if (!done) {
+    setTimeout(() => {
+      b.classList.remove('visible');
+    }, 5000);
+  }
+}
+
+function checkAnnounce() {
+  const elapsedMin = Math.floor(elapsed / 60);
+  const remainSec = elapsed % 60;
+
+  // ちょうど5分ごと（秒が0のとき）
+  if (remainSec !== 0) return;
+  if (elapsedMin === 0) return;
+  if (elapsedMin === lastAnnounced) return;
+  if (elapsedMin % 5 !== 0) return;
+
+  lastAnnounced = elapsedMin;
+
+  if (elapsed >= totalMinutes * 60) {
+    beep('done');
+    showBanner('🎉 ' + totalMinutes + '分終了！お疲れ様でした！', true);
+    stopTimer(true);
+  } else {
+    beep('notify');
+    showBanner('✅ ' + elapsedMin + '分経過しました');
+  }
+}
+
+function startTimer() {
+  if (running) return;
+  running = true;
+
+  // UI切り替え
+  document.getElementById('btnStart').style.display = 'none';
+  document.getElementById('btnPause').style.display = '';
+  document.getElementById('btnReset').style.display = '';
+  document.querySelectorAll('.time-btn').forEach(b => b.disabled = true);
+
+  const banner = document.getElementById('announceBanner');
+  banner.textContent = '集中してください…';
+  banner.className = 'announce-banner visible';
+  setTimeout(() => banner.classList.remove('visible'), 3000);
+
+  beep('start');
+
+  timer = setInterval(() => {
+    elapsed++;
+    updateDisplay();
+    checkAnnounce();
+  }, 1000);
+}
+
+function pauseTimer() {
+  if (!running) return;
+  clearInterval(timer);
+  running = false;
+  document.getElementById('btnPause').textContent = '再開';
+  document.getElementById('btnPause').onclick = resumeTimer;
+  showBanner('⏸ 一時停止中');
+}
+
+function resumeTimer() {
+  running = true;
+  document.getElementById('btnPause').textContent = '一時停止';
+  document.getElementById('btnPause').onclick = pauseTimer;
+
+  const banner = document.getElementById('announceBanner');
+  banner.className = 'announce-banner';
+
+  timer = setInterval(() => {
+    elapsed++;
+    updateDisplay();
+    checkAnnounce();
+  }, 1000);
+}
+
+function stopTimer(done) {
+  clearInterval(timer);
+  running = false;
+  if (!done) {
+    document.getElementById('btnStart').style.display = '';
+    document.getElementById('btnStart').textContent = '再スタート';
+  } else {
+    document.getElementById('btnStart').style.display = 'none';
+  }
+  document.getElementById('btnPause').style.display = 'none';
+}
+
+function resetTimer() {
+  clearInterval(timer);
+  running = false;
+  elapsed = 0;
+  lastAnnounced = -1;
+
+  document.getElementById('btnStart').style.display = '';
+  document.getElementById('btnStart').textContent = 'スタート';
+  document.getElementById('btnStart').onclick = startTimer;
+  document.getElementById('btnPause').style.display = 'none';
+  document.getElementById('btnReset').style.display = 'none';
+  document.querySelectorAll('.time-btn').forEach(b => b.disabled = false);
+
+  const banner = document.getElementById('announceBanner');
+  banner.textContent = '準備OK　スタートを押してください';
+  banner.className = 'announce-banner visible';
+
+  buildSegments();
+  updateDisplay();
+}
+
+// 初期化
+buildSegments();
+updateDisplay();
+document.getElementById('announceBanner').classList.add('visible');
+</script>
+</body>
+</html>
