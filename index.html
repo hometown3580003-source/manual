@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>りらくる入間宮寺店｜新人スタッフマニュアル</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF7A2F;
+    --orange-light: #FFB37A;
+    --orange-pale: #FFF0E6;
+    --orange-dark: #D95A10;
+    --yellow: #FFD166;
+    --cream: #FFFAF5;
+    --brown: #2E1A06;
+    --brown-light: #5C3A1A;
+    --white: #FFFFFF;
+    --shadow: rgba(255,122,47,0.18);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Noto Sans JP', sans-serif; background: var(--cream); color: var(--brown); min-height: 100vh; overflow-x: hidden; }
+  header { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 60%, var(--yellow) 100%); padding: 40px 20px 50px; text-align: center; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; top: -30px; right: -30px; width: 160px; height: 160px; background: rgba(255,255,255,0.12); border-radius: 50%; }
+  header::after { content: ''; position: absolute; bottom: -20px; left: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.10); border-radius: 50%; }
+  .header-badge { display: inline-block; background: rgba(255,255,255,0.3); color: var(--white); font-size: 11px; font-weight: 700; letter-spacing: 0.15em; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; backdrop-filter: blur(4px); }
+  header h1 { font-family: 'Noto Serif JP', serif; font-size: clamp(22px, 6vw, 32px); color: var(--white); font-weight: 700; line-height: 1.4; text-shadow: 0 2px 8px rgba(0,0,0,0.15); position: relative; z-index: 1; }
+  header h1 span { display: block; font-size: clamp(14px, 3.5vw, 18px); font-weight: 400; margin-bottom: 4px; opacity: 0.9; }
+  .header-emoji { font-size: 38px; margin-bottom: 8px; display: block; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  .wave { display: block; width: 100%; margin-top: -2px; }
+  .nav-tabs { display: flex; gap: 10px; padding: 16px 16px 0; overflow-x: auto; scrollbar-width: none; position: sticky; top: 0; background: var(--cream); z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn { flex-shrink: 0; border: none; background: var(--white); color: var(--brown-light); font-family: 'Noto Serif JP', serif; font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 30px; cursor: pointer; transition: all 0.25s; border: 2px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 6px; }
+  .tab-btn.active, .tab-btn:hover { background: var(--orange); color: var(--white); box-shadow: 0 4px 14px var(--shadow); transform: translateY(-1px); }
+  .tab-icon { font-size: 16px; }
+  .section { display: none; padding: 20px 16px 80px; animation: fadeIn 0.35s ease; }
+  .section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .card { background: var(--white); border-radius: 16px; padding: 22px 20px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); border-left: 5px solid var(--orange); }
+  .card-title { font-family: 'Noto Serif JP', serif; font-size: 16px; font-weight: 700; color: var(--orange-dark); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-title .num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--orange); color: white; border-radius: 50%; font-size: 14px; font-weight: 900; flex-shrink: 0; }
+  .important-box { background: #FFF8E1; border-radius: 14px; padding: 18px 18px; margin: 8px 0 16px; border: 2px solid #E65100; font-size: 13px; line-height: 1.9; }
+  .important-title { font-family: 'Noto Serif JP', serif; font-weight: 900; color: #CC0000; margin-bottom: 12px; font-size: 17px; text-align: center; letter-spacing: 0.12em; }
+  .important-body { font-size: 13px; line-height: 1.9; color: var(--brown); }
+  .important-path { background: rgba(255,255,255,0.8); border-radius: 8px; padding: 10px 12px; margin: 10px 0; font-size: 12px; line-height: 1.9; color: var(--brown-light); border-left: 3px solid var(--orange); }
+  .youtube-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.09); margin-bottom: 16px; }
+  .youtube-label { padding: 14px 16px 10px; font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 14px; color: var(--orange-dark); display: flex; align-items: center; gap: 8px; }
+  .youtube-label .yt-icon { background: #FF0000; color: white; border-radius: 6px; padding: 2px 7px; font-size: 11px; font-weight: 900; }
+  .video-container { position: relative; aspect-ratio: 16/9; background: #000; }
+  .video-container iframe { width: 100%; height: 100%; border: none; }
+  .section-header { text-align: center; margin-bottom: 20px; padding: 20px 0 8px; }
+  .section-header .section-icon { font-size: 36px; margin-bottom: 6px; display: block; }
+  .section-header h2 { font-family: 'Noto Serif JP', serif; font-size: 22px; color: var(--orange-dark); font-weight: 700; }
+  .section-header p { font-size: 13px; color: var(--brown-light); margin-top: 4px; }
+  .home-welcome { background: linear-gradient(135deg, var(--orange), var(--orange-light)); border-radius: 16px; padding: 24px 20px; color: white; text-align: center; margin-bottom: 16px; box-shadow: 0 6px 24px var(--shadow); }
+  .home-welcome h2 { font-family: 'Noto Serif JP', serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .home-welcome p { font-size: 13px; line-height: 1.8; opacity: 0.95; }
+  .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  .menu-card { background: var(--white); border-radius: 16px; padding: 20px 14px; text-align: center; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.07); transition: all 0.25s; border: 2px solid transparent; text-decoration: none; display: block; }
+  .menu-card:hover, .menu-card:active { border-color: var(--orange); transform: translateY(-3px); box-shadow: 0 8px 24px var(--shadow); }
+  .menu-card .menu-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+  .menu-card .menu-title { font-family: 'Noto Serif JP', serif; font-size: 15px; font-weight: 700; color: var(--orange-dark); margin-bottom: 4px; }
+  .menu-card .menu-sub { font-size: 11px; color: var(--brown-light); }
+  .drive-btn { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: white; text-decoration: none; font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 14px; padding: 14px 18px; border-radius: 12px; box-shadow: 0 4px 14px var(--shadow); transition: transform 0.2s, box-shadow 0.2s; }
+  .drive-btn:hover, .drive-btn:active { transform: translateY(-2px); box-shadow: 0 8px 20px var(--shadow); }
+  .drive-btn-illust { background: linear-gradient(135deg, var(--yellow), #ffb830); color: var(--brown); box-shadow: 0 4px 14px rgba(255,209,102,0.4); }
+  .point-box { background: linear-gradient(135deg, var(--orange-pale), #fff8f0); border: 2px dashed var(--orange-light); border-radius: 14px; padding: 14px 16px; margin: 12px 0; font-size: 13px; line-height: 1.7; }
+  .point-box .point-title { font-family: 'Noto Serif JP', serif; font-weight: 700; color: var(--orange); margin-bottom: 6px; font-size: 13px; }
+  .bikou-box { background: var(--white); border-radius: 14px; padding: 16px 18px; margin: 20px 0 4px; border-left: 5px solid var(--brown-light); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+  .bikou-title { font-family: 'Noto Serif JP', serif; font-weight: 700; color: var(--brown-light); font-size: 13px; margin-bottom: 8px; }
+  .bikou-body { font-size: 13px; line-height: 1.9; color: var(--brown); }
+  .qr-card { background: var(--white); border-radius: 16px; padding: 22px 20px; margin-top: 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.07); border: 2px dashed var(--orange-light); }
+  .qr-card h3 { font-family: 'Noto Serif JP', serif; font-size: 14px; font-weight: 700; color: var(--orange-dark); margin-bottom: 14px; }
+  .qr-card p { font-size: 12px; color: var(--brown-light); margin-top: 12px; line-height: 1.7; }
+  #qrcode { margin: 0 auto; display: flex; justify-content: center; }
+  footer { text-align: center; padding: 20px; font-size: 11px; color: var(--brown-light); background: var(--white); border-top: 1px solid #f0e8de; margin-top: 20px; font-family: 'Noto Sans JP', sans-serif; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">NEW STAFF MANUAL</div>
+  <span class="header-emoji">🌿</span>
+  <h1>
+    <span>りらくる入間宮寺店</span>
+    新人スタッフマニュアル
+  </h1>
+</header>
+<svg class="wave" viewBox="0 0 375 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+  <path d="M0,20 C80,35 180,5 280,22 C330,28 355,18 375,20 L375,0 L0,0 Z" fill="#FF7A2F"/>
+  <path d="M0,24 C60,10 160,36 260,18 C310,10 345,26 375,22 L375,0 L0,0 Z" fill="#FFB37A" opacity="0.5"/>
+</svg>
+
+<div class="nav-tabs" id="navTabs">
+  <button class="tab-btn active" onclick="showTab('home')" data-tab="home"><span class="tab-icon">🏠</span>ホーム</button>
+  <button class="tab-btn" onclick="showTab('uketsuke')" data-tab="uketsuke"><span class="tab-icon">📋</span>受付編</button>
+  <button class="tab-btn" onclick="showTab('kaikei')" data-tab="kaikei"><span class="tab-icon">💰</span>会計編</button>
+</div>
+
+<!-- HOME -->
+<div class="section active" id="section-home">
+  <div class="home-welcome">
+    <h2>ようこそ！🎉</h2>
+    <p>入間宮寺店へようこそ！<br>このページには業務マニュアルが<br>すべてまとまっています。<br>わからないことがあれば何度でも見てね🍊</p>
+  </div>
+
+  <div class="important-box">
+    <div class="important-title">★★★　重　要　★★★</div>
+    <div class="important-body">
+      <strong>まずはPOSとDWBの解説を熟読してください。</strong>
+      <div class="important-path">
+        りらくルーム →（右上）メニュー → お役立ち情報 → セラピストの基本 → 初めてリラクるに入店される皆様へ → 詳しく見る → ７．最後のおさらい → POSレジ操作／DWB操作
+      </div>
+      その上で下記の「受付編」と「会計編」をご覧ください。
+    </div>
+  </div>
+
+  <div class="menu-grid">
+    <a class="menu-card" onclick="showTab('uketsuke')">
+      <span class="menu-icon">📋</span>
+      <div class="menu-title">受付編</div>
+      <div class="menu-sub">お客様対応・予約受付</div>
+    </a>
+    <a class="menu-card" onclick="showTab('kaikei')">
+      <span class="menu-icon">💰</span>
+      <div class="menu-title">会計編</div>
+      <div class="menu-sub">料金・お支払い対応</div>
+    </a>
+  </div>
+
+  <div class="bikou-box">
+    <div class="bikou-title">📎 備考</div>
+    <div class="bikou-body">システムは本部で変更や修正が随時行われております。その内容は「りらくルーム」の告知や案内を各自ご確認のうえ、理解して下さい。</div>
+  </div>
+
+  <div class="qr-card">
+    <h3>📱 このマニュアルを仲間にシェアする</h3>
+    <div id="qrcode"></div>
+    <p>QRコードを読み取ると<br>このマニュアルページが開きます</p>
+  </div>
+</div>
+
+<!-- 受付編 -->
+<div class="section" id="section-uketsuke">
+  <div class="section-header">
+    <span class="section-icon">📋</span>
+    <h2>受付編</h2>
+    <p>お客様が来店されてからご案内まで</p>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="num">📄</span>マニュアル資料</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="https://drive.google.com/file/d/15THNBOzVfMZzJ0pbK92HVSPwZ9268UWN/view?usp=sharing" target="_blank" class="drive-btn">📝 受付業務マニュアル（文書編）を開く</a>
+      <a href="https://drive.google.com/file/d/1w1ffgF02-aYldoZnfp2PXSSzmSqrHWi2/view?usp=sharing" target="_blank" class="drive-btn drive-btn-illust">🖼️ 受付業務マニュアル（イラスト編）を開く</a>
+    </div>
+  </div>
+  <div class="youtube-card">
+    <div class="youtube-label"><span class="yt-icon">▶ YouTube</span>受付業務　音声解説</div>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/Bob7BhqcWu0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
+  </div>
+  <div class="point-box">
+    <div class="point-title">📌 見るポイント</div>
+    動画を見ながらテキストマニュアルと照らし合わせると、より理解が深まります！わからないところは何度でも再生してね🍊
+  </div>
+</div>
+
+<!-- 会計編 -->
+<div class="section" id="section-kaikei">
+  <div class="section-header">
+    <span class="section-icon">💰</span>
+    <h2>会計編</h2>
+    <p>施術後のお会計・お見送りまで</p>
+  </div>
+  <div class="card">
+    <div class="card-title"><span class="num">📄</span>マニュアル資料</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="https://drive.google.com/file/d/15psWzQDtKSxXeyez1yDpWbf4rzJnW_Dh/view?usp=sharing" target="_blank" class="drive-btn">📝 会計業務マニュアル（文書編）を開く</a>
+      <a href="https://drive.google.com/file/d/1UjcYVZWCrMfPQU77UB-NG5lqgMzLLKbH/view?usp=sharing" target="_blank" class="drive-btn drive-btn-illust">🖼️ 会計業務マニュアル（イラスト編）を開く</a>
+    </div>
+  </div>
+  <div class="youtube-card">
+    <div class="youtube-label"><span class="yt-icon">▶ YouTube</span>会計業務　音声解説</div>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/84J0DfMcLyA" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
+  </div>
+  <div class="point-box">
+    <div class="point-title">📌 見るポイント</div>
+    動画を見ながらテキストマニュアルと照らし合わせると、より理解が深まります！わからないところは何度でも再生してね🍊
+  </div>
+</div>
+
+<footer>
+  © りらくる入間宮寺店｜新人スタッフマニュアル<br>
+  ご不明な点はリーダーにお気軽に聞いてね🍊
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+new QRCode(document.getElementById("qrcode"), {
+  text: window.location.href,
+  width: 160,
+  height: 160,
+  colorDark: "#2E1A06",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.H
+});
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + tab).classList.add('active');
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
