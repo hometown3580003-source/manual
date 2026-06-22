@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>月曜班 シフト順</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F0E8;
+  --ink:#23211D;
+  --paper:#FFFEFB;
+  --line:#D8D2C4;
+  --gold:#A8772E;
+  --red:#9B3B2E;
+  --green:#3E5C45;
+  --blue:#2E4A5C;
+}
+html,body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Noto Sans JP',sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+body{
+  max-width:520px;
+  margin:0 auto;
+  padding:0 0 60px;
+  background:
+    radial-gradient(circle at 15% 8%, rgba(168,119,46,0.08), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(62,92,69,0.06), transparent 45%),
+    var(--bg);
+}
+
+/* ===== ヘッダー ===== */
+.hero{
+  padding:48px 28px 32px;
+  text-align:center;
+  position:relative;
+}
+.hero::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:28px;right:28px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.hero-tag{
+  font-size:11px;
+  letter-spacing:.25em;
+  color:var(--gold);
+  font-weight:700;
+  margin-bottom:14px;
+  text-transform:uppercase;
+}
+.hero-title{
+  font-family:'Shippori Mincho',serif;
+  font-size:32px;
+  font-weight:700;
+  letter-spacing:.04em;
+  line-height:1.4;
+}
+.hero-sub{
+  margin-top:10px;
+  font-size:12.5px;
+  color:#7A7368;
+  letter-spacing:.05em;
+}
+
+/* ===== 今週ハイライト ===== */
+.spotlight{
+  margin:24px 20px 8px;
+  background:var(--ink);
+  border-radius:18px;
+  padding:26px 22px;
+  color:#F4F0E8;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 14px 30px -10px rgba(35,33,29,0.4);
+}
+.spotlight::before{
+  content:'';
+  position:absolute;
+  top:-40%;right:-20%;
+  width:220px;height:220px;
+  background:radial-gradient(circle, rgba(168,119,46,0.35), transparent 70%);
+}
+.spotlight-label{
+  font-size:10.5px;
+  letter-spacing:.22em;
+  color:#C9A267;
+  font-weight:700;
+  position:relative;
+}
+.spotlight-date{
+  font-family:'Shippori Mincho',serif;
+  font-size:19px;
+  margin-top:6px;
+  margin-bottom:18px;
+  position:relative;
+}
+.spotlight-row{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  position:relative;
+}
+.spot-cell{
+  flex:1;
+  text-align:center;
+  padding:10px 4px;
+  border-radius:10px;
+  background:rgba(255,255,255,0.06);
+}
+.spot-cell.is-first{
+  background:linear-gradient(160deg, #C9A267, #A8772E);
+  box-shadow:0 8px 18px -6px rgba(168,119,46,0.6);
+}
+.spot-rank{
+  font-size:9.5px;
+  letter-spacing:.1em;
+  opacity:.75;
+  margin-bottom:4px;
+}
+.spot-cell.is-first .spot-rank{opacity:.85;color:#2A1D0C}
+.spot-name{
+  font-size:15px;
+  font-weight:700;
+}
+.spot-cell.is-first .spot-name{color:#241A0A}
+
+/* ===== セクションタイトル ===== */
+.section-head{
+  margin:36px 24px 14px;
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+.section-head .num{
+  font-family:'Shippori Mincho',serif;
+  font-size:13px;
+  color:var(--gold);
+  font-weight:700;
+}
+.section-head .label{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.08em;
+  color:#5B5648;
+}
+.section-head::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--line);
+  align-self:center;
+}
+
+/* ===== スケジュールカード ===== */
+.schedule{
+  margin:0 20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.week-card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px 18px;
+  position:relative;
+}
+.week-card.is-today{
+  border-color:var(--gold);
+  box-shadow:0 0 0 1px var(--gold), 0 10px 22px -12px rgba(168,119,46,0.5);
+}
+.wc-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+.wc-date{
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+}
+.wc-date .month{
+  font-size:10.5px;
+  color:#A39C8C;
+  font-weight:500;
+  margin-right:2px;
+}
+.wc-badge{
+  font-size:9.5px;
+  letter-spacing:.08em;
+  font-weight:700;
+  color:var(--gold);
+  background:#FBF3E6;
+  padding:3px 9px;
+  border-radius:20px;
+}
+.wc-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+}
+.wc-slot{
+  text-align:center;
+  padding:9px 2px;
+  border-radius:8px;
+  background:#F7F4ED;
+}
+.wc-slot.r1{
+  background:linear-gradient(160deg,#EFD9AE,#DFC084);
+}
+.wc-slot-num{
+  font-size:9px;
+  color:#8C8472;
+  margin-bottom:3px;
+  letter-spacing:.05em;
+}
+.wc-slot.r1 .wc-slot-num{color:#6B5223}
+.wc-slot-name{
+  font-size:13px;
+  font-weight:700;
+  color:var(--ink);
+}
+
+/* ===== フッター注記 ===== */
+.footnote{
+  margin:36px 24px 0;
+  padding:18px 18px;
+  background:#FBF3E6;
+  border-radius:12px;
+  font-size:12px;
+  line-height:1.9;
+  color:#5B5648;
+}
+.footnote b{color:var(--ink)}
+.footnote-title{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.1em;
+  color:var(--gold);
+  margin-bottom:8px;
+}
+
+.bottom-mark{
+  text-align:center;
+  margin-top:40px;
+  font-size:10.5px;
+  letter-spacing:.2em;
+  color:#B0A996;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">MONDAY TEAM ROTATION</div>
+  <div class="hero-title">月曜班<br>シフト順</div>
+  <div class="hero-sub">宮川・有賀・秋元・金丸　／　週替わりローテーション</div>
+</div>
+
+<div class="spotlight" id="spotlight"></div>
+
+<div class="section-head"><span class="num">全</span><span class="label">スケジュール一覧</span></div>
+<div class="schedule" id="schedule"></div>
+
+<div class="footnote">
+  <div class="footnote-title">ルールについて</div>
+  2026年6月22日（月）を起点に、<b>宮川→有賀→秋元→金丸</b>の順で1番からスタート。<br>
+  翌週から全員が1つずつ前に詰めて、最初の人が最後尾に回る形で毎週ローテーションします。
+</div>
+
+<div class="bottom-mark">2026.06 – 2026.09</div>
+
+<script>
+const MEMBERS = ['宮川','有賀','秋元','金丸'];
+const START_DATE = new Date(2026,5,22); // 2026-06-22 (月)
+const END_DATE   = new Date(2026,8,30); // 2026-09-30 まで
+
+function fmtMonthDay(d){
+  return { m: d.getMonth()+1, day: d.getDate() };
+}
+function addDays(d, n){
+  const r = new Date(d);
+  r.setDate(r.getDate()+n);
+  return r;
+}
+function isSameDate(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function thisMonday(){
+  const t = new Date();
+  t.setHours(0,0,0,0);
+  const day = t.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  return addDays(t, diff);
+}
+
+function buildWeeks(){
+  const weeks = [];
+  let d = new Date(START_DATE);
+  let weekIndex = 0;
+  while(d <= END_DATE){
+    const order = [];
+    for(let i=0;i<MEMBERS.length;i++){
+      order.push(MEMBERS[(weekIndex + i) % MEMBERS.length]);
+    }
+    weeks.push({ date: new Date(d), order });
+    d = addDays(d, 7);
+    weekIndex++;
+  }
+  return weeks;
+}
+
+function render(){
+  const weeks = buildWeeks();
+  const todayMonday = thisMonday();
+
+  // 今週に該当する週を見つける（範囲外なら直近の週を表示）
+  let current = weeks.find(w => isSameDate(w.date, todayMonday));
+  if(!current){
+    current = weeks[0];
+    // 今日が開始日より後で終了日より前なら一番近い週を選ぶ
+    for(const w of weeks){
+      if(w.date <= todayMonday) current = w;
+    }
+  }
+
+  // スポットライト（今週 or 直近の対象週）
+  const spot = document.getElementById('spotlight');
+  const {m, day} = fmtMonthDay(current.date);
+  let rowHTML = '';
+  current.order.forEach((name, idx) => {
+    rowHTML += `
+      <div class="spot-cell ${idx===0?'is-first':''}">
+        <div class="spot-rank">${idx+1}番</div>
+        <div class="spot-name">${name}</div>
+      </div>`;
+  });
+  spot.innerHTML = `
+    <div class="spotlight-label">THIS WEEK</div>
+    <div class="spotlight-date">${m}月${day}日（月）週</div>
+    <div class="spotlight-row">${rowHTML}</div>
+  `;
+
+  // 全スケジュール
+  const sched = document.getElementById('schedule');
+  let html = '';
+  weeks.forEach(w => {
+    const {m, day} = fmtMonthDay(w.date);
+    const isToday = isSameDate(w.date, current.date);
+    let slots = '';
+    w.order.forEach((name, idx) => {
+      slots += `
+        <div class="wc-slot ${idx===0?'r1':''}">
+          <div class="wc-slot-num">${idx+1}番</div>
+          <div class="wc-slot-name">${name}</div>
+        </div>`;
+    });
+    html += `
+      <div class="week-card ${isToday?'is-today':''}">
+        <div class="wc-top">
+          <div class="wc-date"><span class="month">${m}月</span>${day}日（月）</div>
+          ${isToday ? '<div class="wc-badge">今週</div>' : ''}
+        </div>
+        <div class="wc-grid">${slots}</div>
+      </div>`;
+  });
+  sched.innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
