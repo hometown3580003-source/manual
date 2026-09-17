@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>月曜班 シフト順</title>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F0E8;
+  --ink:#23211D;
+  --paper:#FFFEFB;
+  --line:#D8D2C4;
+  --gold:#A8772E;
+  --red:#9B3B2E;
+}
+html,body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Noto Sans JP',sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+body{
+  max-width:520px;
+  margin:0 auto;
+  padding:0 0 60px;
+  background:
+    radial-gradient(circle at 15% 8%, rgba(168,119,46,0.08), transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(62,92,69,0.06), transparent 45%),
+    var(--bg);
+}
+
+.hero{
+  padding:44px 28px 28px;
+  text-align:center;
+  position:relative;
+}
+.hero::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:28px;right:28px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+}
+.hero-tag{font-size:11px;letter-spacing:.25em;color:var(--gold);font-weight:700;margin-bottom:14px;text-transform:uppercase;}
+.hero-title{font-family:'Shippori Mincho',serif;font-size:30px;font-weight:700;letter-spacing:.04em;line-height:1.4;}
+.hero-sub{margin-top:10px;font-size:12.5px;color:#7A7368;letter-spacing:.05em;}
+
+/* ローディング */
+.loading{text-align:center;padding:40px;color:#A39C8C;font-size:13px;letter-spacing:.1em;}
+
+/* スポットライト */
+.spotlight{
+  margin:24px 20px 8px;
+  background:var(--ink);
+  border-radius:18px;
+  padding:26px 22px;
+  color:#F4F0E8;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 14px 30px -10px rgba(35,33,29,0.4);
+}
+.spotlight::before{
+  content:'';position:absolute;top:-40%;right:-20%;
+  width:220px;height:220px;
+  background:radial-gradient(circle, rgba(168,119,46,0.35), transparent 70%);
+}
+.spotlight-label{font-size:10.5px;letter-spacing:.22em;color:#C9A267;font-weight:700;position:relative;}
+.spotlight-date{font-family:'Shippori Mincho',serif;font-size:19px;margin-top:6px;margin-bottom:18px;position:relative;}
+.spotlight-row{display:flex;justify-content:space-between;gap:8px;position:relative;}
+.spot-cell{flex:1;text-align:center;padding:10px 4px;border-radius:10px;background:rgba(255,255,255,0.06);}
+.spot-cell.is-first{background:linear-gradient(160deg,#C9A267,#A8772E);box-shadow:0 8px 18px -6px rgba(168,119,46,0.6);}
+.spot-rank{font-size:9.5px;letter-spacing:.1em;opacity:.75;margin-bottom:4px;}
+.spot-cell.is-first .spot-rank{opacity:.85;color:#2A1D0C;}
+.spot-name{font-size:15px;font-weight:700;}
+.spot-cell.is-first .spot-name{color:#241A0A;}
+
+/* 休み設定パネル */
+.off-panel{margin:16px 20px 4px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+.off-panel-title{font-size:11px;letter-spacing:.15em;color:var(--gold);font-weight:700;margin-bottom:12px;}
+.off-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.off-btn{
+  flex:1;min-width:80px;padding:10px 4px;border-radius:10px;
+  border:1.5px solid var(--line);background:var(--bg);
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;
+  color:var(--ink);cursor:pointer;text-align:center;transition:all .15s;
+}
+.off-btn.is-off{background:#FFF0EE;border-color:var(--red);color:var(--red);}
+.off-btn .off-label{display:block;font-size:9.5px;font-weight:500;margin-top:2px;opacity:.6;}
+.off-btn.is-off .off-label{opacity:.8;}
+.apply-btn{
+  display:block;width:100%;margin-top:12px;padding:11px;
+  background:var(--ink);color:#F4F0E8;border:none;border-radius:10px;
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;letter-spacing:.06em;transition:background .15s;
+}
+.apply-btn:hover{background:#444;}
+.apply-btn:disabled{background:#999;cursor:not-allowed;}
+
+/* セクションタイトル */
+.section-head{margin:28px 24px 14px;display:flex;align-items:center;gap:10px;}
+.section-head .label{font-size:13px;font-weight:700;letter-spacing:.08em;color:#5B5648;white-space:nowrap;}
+.section-head::after{content:'';flex:1;height:1px;background:var(--line);}
+
+/* スケジュールカード */
+.schedule{margin:0 20px;display:flex;flex-direction:column;gap:10px;}
+.week-card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;}
+.week-card.is-current{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 10px 22px -12px rgba(168,119,46,0.5);}
+.week-card.is-past{opacity:.5;}
+.wc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.wc-date{font-size:13px;font-weight:700;}
+.wc-date .month{font-size:10.5px;color:#A39C8C;font-weight:500;margin-right:2px;}
+.wc-badge{font-size:9.5px;letter-spacing:.08em;font-weight:700;color:var(--gold);background:#FBF3E6;padding:3px 9px;border-radius:20px;}
+.wc-grid{display:flex;gap:6px;}
+.wc-slot{flex:1;text-align:center;padding:9px 2px;border-radius:8px;background:#F7F4ED;position:relative;}
+.wc-slot.r1{background:linear-gradient(160deg,#EFD9AE,#DFC084);}
+.wc-slot-num{font-size:9px;color:#8C8472;margin-bottom:3px;letter-spacing:.05em;}
+.wc-slot.r1 .wc-slot-num{color:#6B5223;}
+.wc-slot-name{font-size:14px;font-weight:700;color:var(--ink);}
+.off-mark{
+  position:absolute;top:-5px;right:-5px;
+  width:16px;height:16px;background:var(--red);color:#fff;
+  border-radius:50%;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700;
+}
+
+.footnote{margin:28px 20px 0;padding:18px;background:#FBF3E6;border-radius:12px;font-size:12px;line-height:1.9;color:#5B5648;}
+.footnote-title{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;}
+.bottom-mark{text-align:center;margin-top:36px;font-size:10.5px;letter-spacing:.2em;color:#B0A996;}
+
+.toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:#F4F0E8;
+  padding:10px 22px;border-radius:30px;font-size:13px;font-weight:700;
+  transition:transform .25s;z-index:999;pointer-events:none;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">MONDAY TEAM ROTATION</div>
+  <div class="hero-title">月曜班<br>シフト順</div>
+  <div class="hero-sub">有賀・秋元・金丸　／　週替わりローテーション</div>
+</div>
+
+<div id="main-content">
+  <div class="loading">読み込み中...</div>
+</div>
+
+<div class="footnote">
+  <div class="footnote-title">ルールについて</div>
+  2026年9月21日（月）を起点に、<b>秋元→金丸→有賀</b>の順で1番からスタート。<br>
+  翌週から全員が1つ前にシフトします。<br>
+  <b>休みを設定した週</b>は、その人を除いた2名で担当し、翌週はその人が最後尾に回ります。また1番が2週連続にならないよう自動調整されます。
+</div>
+<div class="bottom-mark">2026.09 – 2026.12</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzoLzc_VokNyf32QnognsLDJgNIyrKlpif3pdwaHQwO8zryBPxyiiT5lgHLjZohK8Xz9w/exec';
+const BASE_MEMBERS = ['秋元','金丸','有賀'];
+const WEEKS = [
+  '2026-09-21','2026-09-28','2026-10-05','2026-10-12','2026-10-19',
+  '2026-10-26','2026-11-02','2026-11-09','2026-11-16','2026-11-23',
+  '2026-11-30','2026-12-07','2026-12-14','2026-12-21','2026-12-28'
+];
+
+let offData = {};
+let currentWeekStr = '';
+
+// ===== GAS通信 =====
+async function fetchOff(){
+  try{
+    const res = await fetch(GAS_URL);
+    offData = await res.json();
+  } catch(e){
+    offData = {};
+  }
+}
+
+async function saveOff(week, offList){
+  const btn = document.getElementById('apply-btn');
+  if(btn){ btn.disabled = true; btn.textContent = '保存中...'; }
+  try{
+    await fetch(GAS_URL, {
+      method:'POST',
+      body: JSON.stringify({ week, off: offList }),
+    });
+    offData[week] = offList;
+    showToast('更新しました ✓');
+  } catch(e){
+    showToast('通信エラー。再度お試しください');
+  }
+  render();
+}
+
+// ===== シフト計算 =====
+function computeAllWeeks(){
+  const results = [];
+  let currentOrder = [...BASE_MEMBERS];
+
+  for(let wi=0; wi<WEEKS.length; wi++){
+    const dateStr = WEEKS[wi];
+    const offList = offData[dateStr] || [];
+    const active = currentOrder.filter(m => !offList.includes(m));
+
+    let order = [...active];
+    if(wi > 0 && results.length > 0){
+      const prev1 = results[wi-1].order[0];
+      if(order.length >= 2 && order[0] === prev1){
+        [order[0], order[1]] = [order[1], order[0]];
+      }
+    }
+
+    results.push({ date: dateStr, order, offList });
+
+    // 翌週の順番：出勤者を先頭→末尾ローテ、休み者は末尾に追加
+    const rotated = active.length > 0 ? [...active.slice(1), active[0]] : [...currentOrder];
+    const offMembers = currentOrder.filter(m => offList.includes(m));
+    currentOrder = [...rotated, ...offMembers];
+  }
+  return results;
+}
+
+// ===== 日付ユーティリティ =====
+function todayMonday(){
+  const t = new Date();
+  t.setHours(0,0,0,0);
+  const day = t.getDay();
+  t.setDate(t.getDate() + (day===0 ? -6 : 1-day));
+  return t.toISOString().slice(0,10);
+}
+function fmtDate(str){
+  const d = new Date(str+'T00:00:00');
+  return { m: d.getMonth()+1, day: d.getDate() };
+}
+
+// ===== 描画 =====
+function render(){
+  const allWeeks = computeAllWeeks();
+  const todayMon = todayMonday();
+
+  let currentIdx = allWeeks.findIndex(w => w.date === todayMon);
+  if(currentIdx < 0){
+    currentIdx = allWeeks.findIndex(w => w.date >= todayMon);
+    if(currentIdx < 0) currentIdx = allWeeks.length - 1;
+  }
+  const currentWeek = allWeeks[currentIdx];
+  currentWeekStr = currentWeek.date;
+
+  let html = '';
+
+  // スポットライト
+  const {m:cm, day:cd} = fmtDate(currentWeek.date);
+  let spotRow = '';
+  currentWeek.order.forEach((name,idx) => {
+    spotRow += `<div class="spot-cell ${idx===0?'is-first':''}">
+      <div class="spot-rank">${idx+1}番</div>
+      <div class="spot-name">${name}</div>
+    </div>`;
+  });
+  html += `<div class="spotlight">
+    <div class="spotlight-label">THIS WEEK</div>
+    <div class="spotlight-date">${cm}月${cd}日（月）週</div>
+    <div class="spotlight-row">${spotRow}</div>
+  </div>`;
+
+  // 休み設定パネル
+  const offList = offData[currentWeekStr] || [];
+  let offBtns = '';
+  BASE_MEMBERS.forEach(name => {
+    const isOff = offList.includes(name);
+    offBtns += `<button class="off-btn ${isOff?'is-off':''}" onclick="toggleOff('${name}')">
+      ${name}<span class="off-label">${isOff?'休み':'出勤'}</span>
+    </button>`;
+  });
+  html += `<div class="off-panel">
+    <div class="off-panel-title">今週の休み設定（${cm}月${cd}日週）</div>
+    <div class="off-btns">${offBtns}</div>
+    <button class="apply-btn" id="apply-btn" onclick="applyOff()">この設定で全員に反映する</button>
+  </div>`;
+
+  // スケジュール一覧
+  html += `<div class="section-head"><span class="label">スケジュール一覧</span></div>`;
+  html += `<div class="schedule">`;
+  allWeeks.forEach(w => {
+    const {m, day} = fmtDate(w.date);
+    const isCurrent = w.date === currentWeekStr;
+    const isPast = w.date < todayMon;
+    let slots = '';
+    w.order.forEach((name,i) => {
+      slots += `<div class="wc-slot ${i===0?'r1':''}">
+        <div class="wc-slot-num">${i+1}番</div>
+        <div class="wc-slot-name">${name}</div>
+        ${w.offList.includes(name)?'<div class="off-mark">休</div>':''}
+      </div>`;
+    });
+    html += `<div class="week-card ${isCurrent?'is-current':''} ${isPast?'is-past':''}">
+      <div class="wc-top">
+        <div class="wc-date"><span class="month">${m}月</span>${day}日（月）</div>
+        ${isCurrent?'<div class="wc-badge">今週</div>':''}
+      </div>
+      <div class="wc-grid">${slots}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ===== 操作 =====
+function toggleOff(name){
+  if(!offData[currentWeekStr]) offData[currentWeekStr] = [];
+  const idx = offData[currentWeekStr].indexOf(name);
+  if(idx >= 0) offData[currentWeekStr].splice(idx,1);
+  else offData[currentWeekStr].push(name);
+  render();
+}
+
+function applyOff(){
+  const offList = offData[currentWeekStr] || [];
+  saveOff(currentWeekStr, offList);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+// ===== 起動 =====
+(async()=>{
+  await fetchOff();
+  render();
+})();
+</script>
+</body>
+</html>
